@@ -1,0 +1,13 @@
+{
+  "name": "apollo-server-graphql-koa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "wkylin.w",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server-koa": "^2.10.1",
+    "graphql": "^14.6.0",
+    "koa": "^2.11.0",
+    "nodemon": "^2.0.2"
+  }
+}
