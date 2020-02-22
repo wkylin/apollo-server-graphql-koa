@@ -1,0 +1,77 @@
+type Query {
+    hello: String
+    getBooks: [Book]
+    getAuthors: [Author]
+    favoriteColor: AllowedColor
+    avatar(borderColor: AllowedColor): String
+    searchUnion (text: String!): MessageResult!
+}
+type Mutation {
+    addBook(title: String, author: String): Book
+    createPost(post: PostAndMediaInput): Post
+    updateUserEmail(id: ID!, email: String!): User
+    updateMyUser(id: ID!, name:String!): User
+}
+
+scalar Date
+
+interface Message {
+    content: String
+}
+
+type Notice implements Message {
+    content: String
+    noticeTime: Date
+}
+
+type Remind implements Message {
+    content: String
+    endTime: Date
+}
+
+union MessageResult = Notice | Remind
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+type Book {
+    title: String
+    author: Author
+}
+
+type Author {
+    name: String
+    books: [Book]
+}
+
+input PostAndMediaInput {
+    title: String
+    body: String
+    mediaUrls: [String]
+}
+
+type Post {
+    title: String
+    body: String
+    mediaUrls:[String]
+}
+
+#  interface MutationResponse {
+#      code: String!
+#      success: Boolean!
+#      message: String!
+#  }
+#  type UpdateUserEmailMutationResponse implements MutationResponse {
+#      code: String!
+#      success: Boolean!
+#      message: String!
+#      user: User
+#  }
+
+enum AllowedColor {
+    RED
+    GREEN
+    BLUE
+}
