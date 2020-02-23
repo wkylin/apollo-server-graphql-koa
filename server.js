@@ -19,6 +19,8 @@ const typeDefs = gql`
         favoriteColor: AllowedColor
         avatar(borderColor: AllowedColor): String
         searchUnion (text: String!): MessageResult!
+        human(id: ID!): Human
+        getUsers:[User]
     }
     type Mutation {
         addBook(title: String, author: String): Book
@@ -53,6 +55,12 @@ const typeDefs = gql`
     type Book {
         title: String
         author: Author
+        email: String!
+    }
+    
+    fragment userDetails on User {
+        name
+        email
     }
 
     type Author {
@@ -72,36 +80,78 @@ const typeDefs = gql`
         mediaUrls:[String]
     }
 
-    #  interface MutationResponse {
-    #      code: String!
-    #      success: Boolean!
-    #      message: String!
-    #  }
-    #  type UpdateUserEmailMutationResponse implements MutationResponse {
-    #      code: String!
-    #      success: Boolean!
-    #      message: String!
-    #      user: User
-    #  }
+    type Starship {
+        name: String
+    }
 
     enum AllowedColor {
         RED
         GREEN
         BLUE
     }
+
+    enum Episode {
+        NEWHOPE
+        EMPIRE
+        JEDI
+    }
+
+    interface Character {
+        id: ID!
+        name: String!
+        friends: [Character]
+        appearsIn: [Episode]!
+    }
+    type Human implements Character {
+        id: ID!
+        name: String!
+        friends: [Character]
+        appearsIn: [Episode]!
+        starships: [Starship]
+        totalCredits: Int
+    }
+    type Droid implements Character {
+        id: ID!
+        name: String!
+        friends: [Character]
+        appearsIn: [Episode]!
+        primaryFunction: String
+    }
 `;
 
 const resolvers = {
   MessageResult: {
-    __resolveType(obj, context, info) {
-      console.log(obj, context, info);
-      if (obj.noticeTime) {
+    __resolveType(parent, context, info) {
+      console.log(parent, context, info);
+      if (parent.noticeTime) {
         return 'Notice';
       }
-      if (obj.endTime) {
+      if (parent.endTime) {
         return 'Remind';
       }
       return null;
+    }
+  },
+  Message:{
+    __resolveType(parent, context, info) {
+        return {
+          content: '我的中国心'
+        };
+    }
+  },
+  Character:{
+    __resolveType(parent, context, info){
+      return {
+        id: 1000,
+        name: "Hello",
+        friends: {
+          id: 10023,
+          name: "Ho",
+          friends:[],
+          appearsIn:["EMPIRE"]
+        },
+        appearsIn: ["EMPIRE"],
+      }
     }
   },
   Query: {
@@ -142,10 +192,9 @@ const resolvers = {
       ];
     },
     favoriteColor: () => 'RED',
-    avatar: (parent, args) => {
-      console.log('args', args);
+    avatar: (parent, args, context, info) => {
+      // console.log('args', args);
       return args.borderColor;
-      // args.borderColor is 'RED', 'GREEN', or 'BLUE'
     },
     searchUnion: (parent, { text }) => {
       if (text === 'notice') {
@@ -153,6 +202,27 @@ const resolvers = {
       } else {
         return reminds[0];
       }
+    },
+    human:(parent, args, context)=> {
+      return {
+        id: 1001,
+        name: "Hone",
+        friends: [{
+        
+        }],
+        appearsIn: [],
+        starships: [],
+        totalCredits: 100000,
+      }
+    },
+    getUsers:(parent, args, context) => {
+      return [
+        {
+          id: 11111,
+          name: "Jone",
+          email: "wkylin.w@gmail.com"
+        }
+      ]
     }
   },
   Mutation: {
