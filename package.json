@@ -5,7 +5,7 @@
   "author": "wkylin.w",
   "license": "MIT",
   "dependencies": {
-    "apollo-server-koa": "^2.10.1",
+    "apollo-server-koa": "^2.14.2",
     "graphql": "^14.6.0",
     "graphql-import": "^1.0.0-beta.2",
     "koa": "^2.11.0",
